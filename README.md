@@ -355,45 +355,6 @@ ERROR: Droplet 'web-server-1': Attempt 3 failed to delete snapshot: web-server-1
 
 Contributions are welcome! If you have suggestions, improvements, or encounter issues, feel free to open an [issue](https://github.com/drhdev/mdosnapshots/issues) or submit a [pull request](https://github.com/drhdev/mdosnapshots/pulls).
 
-### How to Contribute:
-
-1. **Fork the Repository:**
-
-   Click the "Fork" button at the top right of the repository page.
-
-2. **Clone Your Fork:**
-
-   ```bash
-   git clone https://github.com/your-username/mdosnapshots.git
-   cd mdosnapshots
-   ```
-
-3. **Create a New Branch:**
-
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-
-4. **Make Your Changes:**
-
-   Implement your feature or fix the issue.
-
-5. **Commit Your Changes:**
-
-   ```bash
-   git commit -m "Description of your changes"
-   ```
-
-6. **Push to Your Fork:**
-
-   ```bash
-   git push origin feature/your-feature-name
-   ```
-
-7. **Create a Pull Request:**
-
-   Navigate to the original repository and create a pull request from your fork.
-
 ## License
 
 This project is licensed under the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.en.html). You are free to use, modify, and distribute this software under the terms of this license.
