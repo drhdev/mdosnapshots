@@ -136,11 +136,8 @@ It's recommended to use a virtual environment to manage Python dependencies with
 With the virtual environment activated, install the required Python packages:
 
 ```bash
-pip install --upgrade pip
-pip install pyyaml
+pip install -r requirements.txt
 ```
-
-*Note:* If you plan to modify the script or contribute, you might consider creating a `requirements.txt` file and installing dependencies using `pip install -r requirements.txt`.
 
 ## Configuration
 
