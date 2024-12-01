@@ -286,6 +286,7 @@ mdosnapshots maintains a log file named `mdosnapshots.log` in the script's direc
   - YAML configuration files contain sensitive API tokens. Ensure these files are stored securely with restricted permissions.
   - **Set File Permissions:**
     ```bash
+    chmod 600 config.yaml
     chmod 600 configs/*.yaml
     ```
 - **Environment Isolation:**
