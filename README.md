@@ -1,12 +1,9 @@
 # mdosnapshots
 
-
-# DoSnapshots
-
 ![License](https://img.shields.io/badge/license-GPL%20v3-blue.svg)
 ![Python Version](https://img.shields.io/badge/python-3.6%2B-blue.svg)
 
-DoSnapshots is a versatile Python script designed to manage snapshots for multiple DigitalOcean droplets. It automates the creation, retention, and deletion of snapshots, ensuring your droplets are backed up efficiently and systematically. By leveraging individual YAML configuration files for each droplet, DoSnapshots offers flexibility and scalability, making it an essential tool for developers and system administrators managing multiple DigitalOcean droplets.
+mdosnapshots is a versatile Python script designed to manage snapshots for multiple DigitalOcean droplets. It automates the creation, retention, and deletion of snapshots, ensuring your droplets are backed up efficiently and systematically. By leveraging individual YAML configuration files for each droplet, mdosnapshots offers flexibility and scalability, making it an essential tool for developers and system administrators managing multiple DigitalOcean droplets.
 
 ## Table of Contents
 
@@ -42,7 +39,7 @@ DoSnapshots is a versatile Python script designed to manage snapshots for multip
 
 ## Prerequisites
 
-Before using DoSnapshots, ensure you have the following:
+Before using mdosnapshots, ensure you have the following:
 
 - A DigitalOcean account with one or more droplets.
 - Access to the terminal on a machine running Ubuntu 22.04.
@@ -50,11 +47,11 @@ Before using DoSnapshots, ensure you have the following:
 
 ## Installation
 
-Follow the steps below to install and set up DoSnapshots on your Ubuntu 22.04 system.
+Follow the steps below to install and set up mdosnapshots on your Ubuntu 22.04 system.
 
 ### 1. Install doctl on Ubuntu 22.04
 
-`doctl` is the official command-line tool for managing DigitalOcean resources. DoSnapshots relies on `doctl` to interact with DigitalOcean's API.
+`doctl` is the official command-line tool for managing DigitalOcean resources. mdosnapshots relies on `doctl` to interact with DigitalOcean's API.
 
 #### Step-by-Step Installation:
 
@@ -100,11 +97,11 @@ Follow the steps below to install and set up DoSnapshots on your Ubuntu 22.04 sy
 
 ### 2. Clone the Repository
 
-Clone the DoSnapshots repository from GitHub to your local machine:
+Clone the mdosnapshots repository from GitHub to your local machine:
 
 ```bash
-git clone https://github.com/drhdev/dosnapshots.git
-cd dosnapshots
+git clone https://github.com/drhdev/mdosnapshots.git
+cd mdosnapshots
 ```
 
 ### 3. Set Up a Python Virtual Environment
@@ -141,7 +138,7 @@ pip install -r requirements.txt
 
 ## Configuration
 
-DoSnapshots uses YAML configuration files to manage snapshot settings for each droplet. Each droplet should have its own YAML file containing specific configurations.
+mdosnapshots uses YAML configuration files to manage snapshot settings for each droplet. Each droplet should have its own YAML file containing specific configurations.
 
 ### YAML Configuration Files
 
@@ -158,12 +155,12 @@ Each YAML file should define the following keys under the `droplet` section:
 It's recommended to store all YAML configuration files in a dedicated directory within the repository for better organization. For example:
 
 ```
-dosnapshots/
+mdosnapshots/
 ├── configs/
 │   ├── droplet1.yaml
 │   ├── droplet2.yaml
 │   └── ...
-├── dosnapshots.py
+├── mdosnapshots.py
 ├── README.md
 └── ...
 ```
@@ -200,7 +197,7 @@ droplet:
 
 ## Usage
 
-DoSnapshots can be executed using the Python interpreter. It offers flexibility in specifying which YAML configuration files to use.
+mdosnapshots can be executed using the Python interpreter. It offers flexibility in specifying which YAML configuration files to use.
 
 ### Running with Default `config.yaml`
 
@@ -209,7 +206,7 @@ By default, if no YAML files are specified, DoSnapshots will use `config.yaml`. 
 **Command:**
 
 ```bash
-python dosnapshots.py
+python mdosnapshots.py
 ```
 
 ### Running with Multiple YAML Files
@@ -219,7 +216,7 @@ You can specify one or more YAML files to manage multiple droplets. The script w
 **Command:**
 
 ```bash
-python dosnapshots.py droplet1.yaml droplet2.yaml droplet3.yaml
+python mdosnapshots.py droplet1.yaml droplet2.yaml droplet3.yaml
 ```
 
 *This command will manage snapshots for `droplet1`, `droplet2`, and `droplet3` sequentially.*
@@ -229,7 +226,7 @@ python dosnapshots.py droplet1.yaml droplet2.yaml droplet3.yaml
 To explicitly run the script with `config.yaml`, use:
 
 ```bash
-python dosnapshots.py config.yaml
+python mdosnapshots.py config.yaml
 ```
 
 ### Verbose Mode
@@ -239,7 +236,7 @@ Enable verbose logging to see real-time outputs in the console. This is useful f
 **Command:**
 
 ```bash
-python dosnapshots.py droplet1.yaml droplet2.yaml -v
+python mdosnapshots.py droplet1.yaml droplet2.yaml -v
 ```
 
 *The `-v` or `--verbose` flag enables detailed logging to the console.*
@@ -251,7 +248,7 @@ Assuming you have two YAML configuration files (`droplet1.yaml` and `droplet2.ya
 1. **Navigate to the Script Directory:**
 
    ```bash
-   cd dosnapshots
+   cd mdosnapshots
    ```
 
 2. **Activate the Virtual Environment:**
@@ -263,12 +260,12 @@ Assuming you have two YAML configuration files (`droplet1.yaml` and `droplet2.ya
 3. **Run the Script with YAML Files and Verbose Logging:**
 
    ```bash
-   python dosnapshots.py configs/droplet1.yaml configs/droplet2.yaml -v
+   python mdosnapshots.py configs/droplet1.yaml configs/droplet2.yaml -v
    ```
 
 ## Logging
 
-DoSnapshots maintains a log file named `dosnapshots.log` in the script's directory. This log captures all operations, including snapshot creations, deletions, and any errors encountered.
+mdosnapshots maintains a log file named `mdosnapshots.log` in the script's directory. This log captures all operations, including snapshot creations, deletions, and any errors encountered.
 
 - **Log Rotation:** The script uses a rotating file handler to prevent the log file from growing indefinitely. Each log file is capped at 5 MB, with up to 5 backup files retained.
 - **Verbose Logging:** When the `-v` flag is used, logs are also output to the console for real-time monitoring.
@@ -276,11 +273,11 @@ DoSnapshots maintains a log file named `dosnapshots.log` in the script's directo
 **Example Log Entry:**
 
 ```
-2024-04-27 10:00:00 - dosnapshots.py - INFO - Running command: /usr/local/bin/doctl compute snapshot list --resource droplet --format ID,Name,CreatedAt --no-header --access-token abcdef...
-2024-04-27 10:00:05 - dosnapshots.py - INFO - New snapshot created: web-server-1-20240427100000
-2024-04-27 10:00:05 - dosnapshots.py - INFO - Snapshots identified for deletion: ['web-server-1-20240426100000']
-2024-04-27 10:00:10 - dosnapshots.py - INFO - Snapshot deleted: web-server-1-20240426100000
-2024-04-27 10:00:10 - dosnapshots.py - INFO - FINAL_STATUS | SUCCESS | hostname | 2024-04-27 10:00:10 | web-server-1-20240427100000 | 2 snapshots exist
+2024-04-27 10:00:00 - mdosnapshots.py - INFO - Running command: /usr/local/bin/doctl compute snapshot list --resource droplet --format ID,Name,CreatedAt --no-header --access-token abcdef...
+2024-04-27 10:00:05 - mdosnapshots.py - INFO - New snapshot created: web-server-1-20240427100000
+2024-04-27 10:00:05 - mdosnapshots.py - INFO - Snapshots identified for deletion: ['web-server-1-20240426100000']
+2024-04-27 10:00:10 - mdosnapshots.py - INFO - Snapshot deleted: web-server-1-20240426100000
+2024-04-27 10:00:10 - mdosnapshots.py - INFO - FINAL_STATUS | SUCCESS | hostname | 2024-04-27 10:00:10 | web-server-1-20240427100000 | 2 snapshots exist
 ```
 
 ## Security Considerations
@@ -351,12 +348,12 @@ ERROR: Droplet 'web-server-1': Attempt 3 failed to delete snapshot: web-server-1
 **5. Log File Not Updating:**
 
 *Solution:*
-- Ensure the script has write permissions to the directory where `dosnapshots.log` is stored.
+- Ensure the script has write permissions to the directory where `mdosnapshots.log` is stored.
 - Check if the log rotation is causing issues.
 
 ## Contributing
 
-Contributions are welcome! If you have suggestions, improvements, or encounter issues, feel free to open an [issue](https://github.com/drhdev/dosnapshots/issues) or submit a [pull request](https://github.com/drhdev/dosnapshots/pulls).
+Contributions are welcome! If you have suggestions, improvements, or encounter issues, feel free to open an [issue](https://github.com/drhdev/mdosnapshots/issues) or submit a [pull request](https://github.com/drhdev/mdosnapshots/pulls).
 
 ### How to Contribute:
 
@@ -367,8 +364,8 @@ Contributions are welcome! If you have suggestions, improvements, or encounter i
 2. **Clone Your Fork:**
 
    ```bash
-   git clone https://github.com/your-username/dosnapshots.git
-   cd dosnapshots
+   git clone https://github.com/your-username/mdosnapshots.git
+   cd mdosnapshots
    ```
 
 3. **Create a New Branch:**
