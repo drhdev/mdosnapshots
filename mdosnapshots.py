@@ -22,7 +22,7 @@ from typing import List, Optional
 
 # Constants
 DEFAULT_CONFIG_FILE = "config.yaml"
-LOG_FILE = "dosnapshots.log"
+LOG_FILE = "mdosnapshots.log"
 DELAY_BETWEEN_DROPLETS = 5  # seconds
 
 @dataclass
@@ -87,7 +87,7 @@ class SnapshotManager:
         return default_path if os.path.exists(default_path) else None
 
     def setup_logging(self):
-        self.logger = logging.getLogger('dosnapshots.py')
+        self.logger = logging.getLogger('mdosnapshots.py')
         self.logger.setLevel(logging.DEBUG)
         handler = RotatingFileHandler(LOG_FILE, maxBytes=5 * 1024 * 1024, backupCount=5)
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
