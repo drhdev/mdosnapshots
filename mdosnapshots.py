@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # mdosnapshots.py
-# Version: 1.0
+# Version: 0.1
 # Author: drhdev
 # License: GPL v3
 #
