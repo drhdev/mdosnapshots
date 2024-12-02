@@ -90,7 +90,7 @@ Follow the steps below to install and set up mdosnapshots on your Ubuntu 22.04 s
    Obtain a DigitalOcean API token with the necessary permissions from your [DigitalOcean Control Panel](https://cloud.digitalocean.com/settings/api/tokens). Then, authenticate `doctl`:
 
    ```bash
-   doctl auth init
+   ~~doctl auth init~~
    ```
 
    You'll be prompted to enter your API token.
