@@ -1,6 +1,0 @@
-droplet:
-  id: "12345678"
-  name: "web-server-1"
-  api_token: "your_api_token_1"
-  retain_last_snapshots: 3
-  delete_retries: 5
