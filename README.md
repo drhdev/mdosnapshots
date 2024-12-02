@@ -100,7 +100,7 @@
 To manually run the snapshot management script:
 
 ```bash
-python mdosnapshots.py
+python mdosnapshots.py -v
 ```
 
 - **Options**:
