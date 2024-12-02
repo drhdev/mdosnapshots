@@ -118,7 +118,7 @@ python mdosnapshots.py droplet1.yaml droplet2.yaml -v
 After running the snapshot script, use the log notifier to send the latest status to Telegram:
 
 ```bash
-python log2telegram.py
+python log2telegram.py -v
 ```
 
 - **Options**:
