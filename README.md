@@ -1,4 +1,3 @@
-```markdown
 # mdosnapshots
 
 ![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)
@@ -176,4 +175,3 @@ Contributions are welcome! Please fork the repository and submit a pull request 
 ## License
 
 This project is licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE) file for details.
-```
