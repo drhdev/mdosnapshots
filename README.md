@@ -197,16 +197,16 @@ droplet:
 
 ## Usage
 
-DoSnapshots can be executed using the Python interpreter. It offers flexibility in specifying which YAML configuration files to use.
+mdosnapshots can be executed using the Python interpreter. It offers flexibility in specifying which YAML configuration files to use.
 
 ### Running with Default `config.yaml`
 
-By default, if no YAML files are specified, DoSnapshots will use `config.yaml`. Ensure that `config.yaml` exists in the script's directory with the correct structure.
+By default, if no YAML files are specified, mdosnapshots will use `config.yaml`. Ensure that `config.yaml` exists in the script's directory with the correct structure.
 
 **Command:**
 
 ```bash
-python dosnapshots.py
+python mdosnapshots.py
 ```
 
 ### Running with Multiple YAML Files
@@ -216,7 +216,7 @@ You can specify one or more YAML files to manage multiple droplets. The script w
 **Command:**
 
 ```bash
-python dosnapshots.py droplet1.yaml droplet2.yaml droplet3.yaml
+python mdosnapshots.py droplet1.yaml droplet2.yaml droplet3.yaml
 ```
 
 *This command will manage snapshots for `droplet1.yaml`, `droplet2.yaml`, and `droplet3.yaml` sequentially.*
@@ -226,7 +226,7 @@ python dosnapshots.py droplet1.yaml droplet2.yaml droplet3.yaml
 To explicitly run the script with `config.yaml`, use:
 
 ```bash
-python dosnapshots.py config.yaml
+python mdosnapshots.py config.yaml
 ```
 
 ### Verbose Mode
@@ -236,14 +236,14 @@ Enable verbose logging to see real-time outputs in the console. This is useful f
 **Command:**
 
 ```bash
-python dosnapshots.py droplet1.yaml droplet2.yaml -v
+python mdosnapshots.py droplet1.yaml droplet2.yaml -v
 ```
 
 *The `-v` or `--verbose` flag enables detailed logging to the console.*
 
 ### Scheduling with Cron
 
-Automate the execution of DoSnapshots by scheduling it with `cron`. Below are examples of how to set up cron jobs to run the script at various intervals.
+Automate the execution of mdosnapshots by scheduling it with `cron`. Below are examples of how to set up cron jobs to run the script at various intervals.
 
 #### 1. Understanding Cron Syntax
 
@@ -266,7 +266,7 @@ Cron uses a specific syntax to schedule tasks. Each cron job consists of five ti
 This cron job runs the script every day at 2:00 AM.
 
 ```cron
-0 2 * * * /path/to/venv/bin/python /path/to/dosnapshots/dosnapshots.py /path/to/dosnapshots/configs/droplet1.yaml /path/to/dosnapshots/configs/droplet2.yaml >> /path/to/dosnapshots/dosnapshots_cron.log 2>&1
+0 2 * * * /path/to/venv/bin/python /path/to/mdosnapshots/mdosnapshots.py /path/to/mdosnapshots/configs/droplet1.yaml /path/to/mdosnapshots/configs/droplet2.yaml >> /path/to/mdosnapshots/mdosnapshots_cron.log 2>&1
 ```
 
 **b. Run Weekly on Sunday at 3:30 AM**
@@ -274,7 +274,7 @@ This cron job runs the script every day at 2:00 AM.
 This cron job runs the script every Sunday at 3:30 AM.
 
 ```cron
-30 3 * * 0 /path/to/venv/bin/python /path/to/dosnapshots/dosnapshots.py /path/to/dosnapshots/configs/droplet1.yaml >> /path/to/dosnapshots/dosnapshots_cron.log 2>&1
+30 3 * * 0 /path/to/venv/bin/python /path/to/mdosnapshots/mdosnapshots.py /path/to/mdosnapshots/configs/droplet1.yaml >> /path/to/mdosnapshots/mdosnapshots_cron.log 2>&1
 ```
 
 **c. Run Hourly**
@@ -282,7 +282,7 @@ This cron job runs the script every Sunday at 3:30 AM.
 This cron job runs the script at the start of every hour.
 
 ```cron
-0 * * * * /path/to/venv/bin/python /path/to/dosnapshots/dosnapshots.py /path/to/dosnapshots/configs/droplet1.yaml >> /path/to/dosnapshots/dosnapshots_cron.log 2>&1
+0 * * * * /path/to/venv/bin/python /path/to/mdosnapshots/mdosnapshots.py /path/to/mdosnapshots/configs/droplet1.yaml >> /path/to/mdosnapshots/mdosnapshots_cron.log 2>&1
 ```
 
 **d. Run Every 15 Minutes**
@@ -290,7 +290,7 @@ This cron job runs the script at the start of every hour.
 This cron job runs the script every 15 minutes.
 
 ```cron
-*/15 * * * * /path/to/venv/bin/python /path/to/dosnapshots/dosnapshots.py /path/to/dosnapshots/configs/droplet1.yaml >> /path/to/dosnapshots/dosnapshots_cron.log 2>&1
+*/15 * * * * /path/to/venv/bin/python /path/to/mdosnapshots/mdosnapshots.py /path/to/mdosnapshots/configs/droplet1.yaml >> /path/to/mdosnapshots/mdosnapshots_cron.log 2>&1
 ```
 
 **e. Run Multiple Droplets with Delay**
@@ -298,7 +298,7 @@ This cron job runs the script every 15 minutes.
 If managing multiple droplets and wanting to maintain the 5-second delay between each execution, you can structure the script accordingly. However, since the script already includes a delay between droplets, you don't need to add additional delays in cron.
 
 ```cron
-0 2 * * * /path/to/venv/bin/python /path/to/dosnapshots/dosnapshots.py /path/to/dosnapshots/configs/droplet1.yaml /path/to/dosnapshots/configs/droplet2.yaml >> /path/to/dosnapshots/dosnapshots_cron.log 2>&1
+0 2 * * * /path/to/venv/bin/python /path/to/mdosnapshots/mdosnapshots.py /path/to/mdosnapshots/configs/droplet1.yaml /path/to/mdosnapshots/configs/droplet2.yaml >> /path/to/mdosnapshots/mdosnapshots_cron.log 2>&1
 ```
 
 #### 3. Setting Up Cron Jobs
@@ -316,10 +316,10 @@ If managing multiple droplets and wanting to maintain the 5-second delay between
    Scroll to the end of the file and add your desired cron job based on the examples above. For instance, to run daily at 2:00 AM:
 
    ```cron
-   0 2 * * * /home/username/dosnapshots/venv/bin/python /home/username/dosnapshots/dosnapshots.py /home/username/dosnapshots/configs/droplet1.yaml /home/username/dosnapshots/configs/droplet2.yaml >> /home/username/dosnapshots/dosnapshots_cron.log 2>&1
+   0 2 * * * /home/username/mdosnapshots/venv/bin/python /home/username/mdosnapshots/mdosnapshots.py /home/username/mdosnapshots/configs/droplet1.yaml /home/username/mdosnapshots/configs/droplet2.yaml >> /home/username/mdosnapshots/mdosnapshots_cron.log 2>&1
    ```
 
-   *Ensure you replace `/home/username/dosnapshots/` with the actual path to your DoSnapshots directory.*
+   *Ensure you replace `/home/username/mdosnapshots/` with the actual path to your mdosnapshots directory.*
 
 3. **Save and Exit:**
 
@@ -340,10 +340,10 @@ After setting up your cron jobs:
 
 - **Check the Log File:**
 
-  The output of the script is appended to `dosnapshots_cron.log`. Monitor this file to ensure the script runs as expected.
+  The output of the script is appended to `mdosnapshots_cron.log`. Monitor this file to ensure the script runs as expected.
 
   ```bash
-  tail -f /path/to/dosnapshots/dosnapshots_cron.log
+  tail -f /path/to/mdosnapshots/mdosnapshots_cron.log
   ```
 
 - **Check Cron Logs:**
