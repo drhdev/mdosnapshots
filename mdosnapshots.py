@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # mdosnapshots.py
-# Version: 0.1
+# Version: 0.2.3
 # Author: drhdev
 # License: GPL v3
 #
 # Description:
 # This script manages snapshots for multiple DigitalOcean droplets, including creation, retention, and deletion.
-# Configuration is handled via YAML files, allowing individual settings per droplet.
+# Configuration is handled via YAML files located in the 'configs' subfolder, allowing individual settings per droplet.
 
 import subprocess
 import logging
@@ -21,7 +21,8 @@ from dataclasses import dataclass
 from typing import List, Optional
 
 # Constants
-DEFAULT_CONFIG_FILE = "config.yaml"
+CONFIGS_DIR = "configs"
+DEFAULT_CONFIG_FILE = os.path.join(CONFIGS_DIR, "config.yaml")
 LOG_FILE = "mdosnapshots.log"
 DELAY_BETWEEN_DROPLETS = 5  # seconds
 
@@ -46,19 +47,20 @@ class SnapshotManager:
     def load_configs(self) -> List[DropletConfig]:
         droplets = []
         for path in self.config_paths:
-            if not os.path.exists(path):
-                self.error_exit(f"Configuration file '{path}' does not exist.")
+            full_path = os.path.join(CONFIGS_DIR, path)
+            if not os.path.exists(full_path):
+                self.error_exit(f"Configuration file '{full_path}' does not exist.")
             try:
-                with open(path, 'r') as f:
+                with open(full_path, 'r') as f:
                     config = yaml.safe_load(f)
                 if 'droplet' not in config:
-                    self.error_exit(f"Configuration file '{path}' is missing the 'droplet' key.")
+                    self.error_exit(f"Configuration file '{full_path}' is missing the 'droplet' key.")
                 droplet = config['droplet']
                 # Validate required fields
                 required_fields = ['id', 'name', 'api_token', 'retain_last_snapshots', 'delete_retries']
                 for field in required_fields:
                     if field not in droplet:
-                        self.error_exit(f"Configuration file '{path}' is missing the '{field}' field under 'droplet'.")
+                        self.error_exit(f"Configuration file '{full_path}' is missing the '{field}' field under 'droplet'.")
                 droplets.append(DropletConfig(
                     id=droplet['id'],
                     name=droplet['name'],
@@ -67,9 +69,9 @@ class SnapshotManager:
                     delete_retries=int(droplet['delete_retries'])
                 ))
             except yaml.YAMLError as e:
-                self.error_exit(f"Error parsing YAML file '{path}': {e}")
+                self.error_exit(f"Error parsing YAML file '{full_path}': {e}")
             except ValueError as ve:
-                self.error_exit(f"Invalid data type in '{path}': {ve}")
+                self.error_exit(f"Invalid data type in '{full_path}': {ve}")
         if not droplets:
             self.error_exit("No valid droplet configurations found.")
         return droplets
@@ -90,7 +92,7 @@ class SnapshotManager:
         self.logger = logging.getLogger('mdosnapshots.py')
         self.logger.setLevel(logging.DEBUG)
         handler = RotatingFileHandler(LOG_FILE, maxBytes=5 * 1024 * 1024, backupCount=5)
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
         handler.setFormatter(formatter)
         self.logger.addHandler(handler)
 
@@ -109,7 +111,7 @@ class SnapshotManager:
     def run_command(self, command: str, api_token: str) -> Optional[str]:
         masked_token = api_token[:6] + '...' + api_token[-6:]
         masked_command = command.replace(api_token, masked_token)
-        self.logger.info(f"Running command: {masked_command}")
+        self.logger.info(f"Executing command: {masked_command}")
         try:
             env = os.environ.copy()
             env["DO_API_TOKEN"] = api_token
@@ -148,10 +150,10 @@ class SnapshotManager:
 
         return snapshots
 
-    def identify_snapshots_to_delete(self, snapshots: List[dict], retain: int) -> List[dict]:
+    def identify_snapshots_to_delete(self, droplet: DropletConfig, snapshots: List[dict], retain: int) -> List[dict]:
         snapshots.sort(key=lambda x: x['created_at'], reverse=True)
         to_delete = snapshots[retain:]
-        self.logger.info(f"Snapshots identified for deletion: {[snap['name'] for snap in to_delete]}")
+        self.logger.info(f"Droplet '{droplet.name}': Identified {len(to_delete)} snapshot(s) for deletion: {[snap['name'] for snap in to_delete]}")
         return to_delete
 
     def create_snapshot(self, droplet: DropletConfig) -> Optional[str]:
@@ -180,6 +182,7 @@ class SnapshotManager:
                 else:
                     self.logger.error(f"Droplet '{droplet.name}': Attempt {attempt} failed to delete snapshot: {snap['name']}")
                     if attempt < droplet.delete_retries:
+                        self.logger.info(f"Droplet '{droplet.name}': Retrying deletion of snapshot '{snap['name']}' after delay...")
                         time.sleep(5)  # Wait before retrying
                     else:
                         self.logger.error(f"Droplet '{droplet.name}': Failed to delete snapshot after {droplet.delete_retries} attempts: {snap['name']}")
@@ -187,17 +190,18 @@ class SnapshotManager:
     def write_final_status(self, droplet: DropletConfig, snapshot_name: str, total_snapshots: int, status: str):
         hostname = os.uname().nodename
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        final_status_message = f"FINAL_STATUS | {status.upper()} | {hostname} | {timestamp} | {snapshot_name} | {total_snapshots} snapshots exist"
+        final_status_message = f"FINAL_STATUS | mdosnapshots.py | {droplet.name} | {status.upper()} | {hostname} | {timestamp} | {snapshot_name} | {total_snapshots} snapshots exist"
         self.logger.info(final_status_message)
 
     def manage_snapshots_for_droplet(self, droplet: DropletConfig):
-        self.logger.info(f"Starting snapshot management for droplet '{droplet.name}' (ID: {droplet.id})")
+        self.logger.info(f"--- Managing droplet '{droplet.name}' (ID: {droplet.id}) ---")
+        self.logger.info(f"Configuration: Retain last {droplet.retain_last_snapshots} snapshot(s). New snapshots will be named as '{droplet.name}-<timestamp>'.")
 
         # Retrieve existing snapshots
         snapshots = self.get_snapshots(droplet)
 
         # Identify snapshots to delete based on retention policy
-        to_delete = self.identify_snapshots_to_delete(snapshots, droplet.retain_last_snapshots)
+        to_delete = self.identify_snapshots_to_delete(droplet, snapshots, droplet.retain_last_snapshots)
 
         # Create a new snapshot
         snapshot_name = self.create_snapshot(droplet)
@@ -205,14 +209,21 @@ class SnapshotManager:
         # Delete old snapshots
         if to_delete:
             self.delete_snapshots(droplet, to_delete)
+        else:
+            self.logger.info(f"Droplet '{droplet.name}': No snapshots to delete based on retention policy.")
+
+        # Re-fetch snapshots after creation and deletion to get the updated count
+        updated_snapshots = self.get_snapshots(droplet)
+        total_snapshots = len(updated_snapshots)
 
         # Write final status to the log
         if snapshot_name:
-            self.write_final_status(droplet, snapshot_name, len(snapshots), "success")
+            status = "success"
         else:
-            self.write_final_status(droplet, "none", len(snapshots), "failure")
+            status = "failure"
+        self.write_final_status(droplet, snapshot_name if snapshot_name else "none", total_snapshots, status)
 
-        self.logger.info(f"Snapshot management completed for droplet '{droplet.name}'")
+        self.logger.info(f"--- Completed snapshot management for droplet '{droplet.name}' ---\n")
 
     def run(self):
         for idx, droplet in enumerate(self.droplets):
@@ -229,8 +240,7 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument(
         'configs',
         nargs='*',
-        default=[DEFAULT_CONFIG_FILE],
-        help=f"YAML configuration files for droplets. Defaults to '{DEFAULT_CONFIG_FILE}' if not specified."
+        help=f"YAML configuration files for droplets located in the '{CONFIGS_DIR}' directory. Defaults to all .yaml files in the directory if not specified."
     )
     parser.add_argument(
         '-v', '--verbose',
@@ -241,7 +251,20 @@ def parse_arguments() -> argparse.Namespace:
 
 def main():
     args = parse_arguments()
-    config_files = args.configs
+
+    # Check if the configs directory exists
+    if not os.path.isdir(CONFIGS_DIR):
+        print(f"ERROR: The configuration directory '{CONFIGS_DIR}' does not exist.", file=sys.stderr)
+        sys.exit(1)
+
+    if args.configs:
+        config_files = args.configs
+    else:
+        # Get all .yaml files in the configs directory, sorted alphabetically
+        config_files = sorted(f for f in os.listdir(CONFIGS_DIR) if f.endswith('.yaml'))
+        if not config_files:
+            print(f"ERROR: No '.yaml' configuration files found in the '{CONFIGS_DIR}' directory.", file=sys.stderr)
+            sys.exit(1)
 
     # Initialize the SnapshotManager with the provided configuration files
     manager = SnapshotManager(config_paths=config_files, verbose=args.verbose)
