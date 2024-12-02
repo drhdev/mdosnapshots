@@ -1,8 +1,8 @@
-# mdosnapshots
+# mdosnapshots - multiple Digitalocean snapshots
 
 ![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)
 
-`mdosnapshots` is a Python-based tool designed to manage snapshots for multiple DigitalOcean Droplets. It automates the creation, retention, and deletion of snapshots, ensuring your droplets are backed up efficiently. Additionally, it integrates with Telegram to notify you of the snapshot operations' status, providing real-time updates directly to your messaging app.
+`mdosnapshots` ("multiple Digitalocean snapshots") is a Python-based tool designed to manage snapshots for multiple DigitalOcean Droplets. It automates the creation, retention, and deletion of snapshots, ensuring your droplets are backed up efficiently. Additionally, it integrates with Telegram to notify you of the snapshot operations' status, providing real-time updates directly to your messaging app.
 
 ## Table of Contents
 
