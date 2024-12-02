@@ -12,7 +12,6 @@
 - [Configuration](#configuration)
 - [Usage](#usage)
 - [Setting Up Cronjobs](#setting-up-cronjobs)
-  - [Example Cronjob](#example-cronjob)
 - [Logging](#logging)
 - [Contributing](#contributing)
 - [License](#license)
