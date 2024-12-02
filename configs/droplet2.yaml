@@ -1,6 +1,6 @@
 droplet:
-  id: "87654321"
-  name: "db-server-1"
-  api_token: "your_api_token_2"
-  retain_last_snapshots: 5
-  delete_retries: 3
+  id: "your-digitalocean-droplet-id-2" # e.g. 33345678
+  name: "your-digitalocean-droplet-name-2" # e.g. wordpress-ubuntu-s-1vcpu-1gb-nyc2-01
+  api_token: "your_digitalocean_api_token_2"
+  retain_last_snapshots: 0
+  delete_retries: 2
