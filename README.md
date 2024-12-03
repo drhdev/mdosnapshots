@@ -148,11 +148,11 @@ To automate the snapshot management and notification process, set up cronjobs th
    The following example schedules the snapshot process to run daily at 2:00 AM and immediately sends a Telegram notification after snapshots are managed.
 
    ```cron
-   0 2 * * * /usr/bin/env bash -c 'cd /path/to/mdosnapshots && /path/to/venv/bin/python mdosnapshots.py >> mdosnapshots_cron.log 2>&1 && /path/to/venv/bin/python log2telegram.py >> log2telegram_cron.log 2>&1'
+   0 2 * * * PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin; cd /path/to/mdosnapshots && /path/to/mdosnapshots/venv/bin/python mdosnapshots.py >> mdosnapshots_cron.log 2>&1 && /path/to/mdosnapshots/venv/bin/python log2telegram.py >> log2telegram_cron.log 2>&1
    ```
 
    - **Replace `/path/to/mdosnapshots`** with the actual path to your `mdosnapshots` repository.
-   - **Replace `/path/to/venv/bin/python`** with the path to your Python executable, especially if using a virtual environment.
+   - **Replace `/path/to/modsnapshots/venv/bin/python`** with the path to your Python executable, especially if using a virtual environment.
    - **Logging**: The output of each script is appended to separate cron logs for troubleshooting.
 
 3. **Save and Exit**
