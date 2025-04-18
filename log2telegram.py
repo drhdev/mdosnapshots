@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
 # log2telegram.py
-# Version: 0.4.1
+# Version: 0.5
 # Author: drhdev
 # License: GPLv3
 #
 # Description:
 # This script checks the 'mdosnapshots.log' file for new FINAL_STATUS entries,
-# sends them as formatted messages via Telegram, and then exits. It ensures
-# that only new entries are sent by tracking the last read position and inode.
-# Additionally, it introduces a configurable delay between sending multiple
-# Telegram messages to avoid overwhelming the Telegram API.
+# sends them as formatted messages via Telegram only when status is not SUCCESS,
+# and then exits. It ensures that only new entries are sent by tracking the last
+# read position and inode.
 
 import os
 import sys
@@ -123,17 +122,6 @@ def send_telegram_message(message, retries=3, delay_between_retries=5):
 def format_message(raw_message):
     """
     Formats the raw FINAL_STATUS log entry into a Markdown message for Telegram.
-    Example Input:
-        FINAL_STATUS | log2telegram.py | example.com | SUCCESS | hostname | 2024-12-02 13:32:34 | example.com-20241202133213 | 3 snapshots exist
-    Example Output:
-        *FINAL_STATUS*
-        *Script:* `log2telegram.py`
-        *Droplet:* `example.com`
-        *Status:* `SUCCESS`
-        *Hostname:* `hostname`
-        *Timestamp:* `2024-12-02 13:32:34`
-        *Snapshot:* `example.com-20241202133213`
-        *Total Snapshots:* `3 snapshots exist`
     """
     parts = raw_message.split(" | ")
     if len(parts) != 8:
@@ -157,7 +145,7 @@ def format_message(raw_message):
 def process_log(state: LogState, delay_between_messages: int):
     """
     Processes the log file for new FINAL_STATUS entries and sends them via Telegram.
-    Introduces a delay between sending multiple messages to avoid overwhelming Telegram.
+    Only entries where status is not SUCCESS will trigger a message.
     """
     if not os.path.exists(LOG_FILE_PATH):
         logger.error(f"Log file '{LOG_FILE_PATH}' does not exist.")
@@ -182,29 +170,34 @@ def process_log(state: LogState, delay_between_messages: int):
             logger.info(f"Processing {len(lines)} new line(s).")
             final_status_entries = []
             for line_number, line in enumerate(lines, start=1):
-                original_line = line  # Keep the original line for debugging
+                original_line = line
                 line = line.strip()
 
                 # Check if the line contains the delimiter ' - '
                 if " - " not in line:
-                    # Optionally, you can log this at a lower level or skip logging
                     logger.debug(f"Line {line_number}: Skipping non-formatted line.")
                     continue  # Skip lines without the expected format
 
                 # Split the log line into components
                 split_line = line.split(" - ", 2)  # Split into 3 parts: timestamp, level, message
                 if len(split_line) < 3:
-                    # This should be rare if ' - ' is present, but handle just in case
                     logger.warning(f"Malformed log line (less than 3 parts): {original_line.strip()}")
                     continue  # Skip malformed lines
 
                 message_part = split_line[2]  # The actual log message
 
                 if FINAL_STATUS_PATTERN.match(message_part):
-                    final_status_entries.append((line_number, message_part))
+                    parts = message_part.split(" | ")
+                    if len(parts) == 8:
+                        status = parts[3].strip()
+                        if status.upper() != "SUCCESS":
+                            final_status_entries.append((line_number, message_part))
+                        else:
+                            logger.debug(f"Line {line_number}: Status SUCCESS, skipping Telegram notification.")
+                    else:
+                        logger.warning(f"Unexpected FINAL_STATUS format: {message_part}")
                 else:
                     logger.debug(f"Line {line_number}: No FINAL_STATUS entry found.")
-                    logger.debug(f"Processed Line {line_number}: {message_part}")  # Log the actual message content
 
             if final_status_entries:
                 logger.info(f"Detected {len(final_status_entries)} FINAL_STATUS entry(ies) to send.")
